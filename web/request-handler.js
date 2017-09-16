@@ -2,7 +2,9 @@ var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var url = require('url');
 var fs = require('fs');
+var path = require('path');
 var queryString = require('querystring');
+var fetchSite = require('../workers/htmlfetcher.js');
 // require more modules/folders here!
 
 var requestMethods = {
@@ -21,7 +23,6 @@ var requestMethods = {
         res.end(data);
       });
     } else {
-      var searchPath = path.join(archive.paths.archivedSites, dirName);
       //////////////// refactor with directory name////////////////////////////////////////////////////
       fs.exists(searchPath, (exists) => {
         if (exists) {

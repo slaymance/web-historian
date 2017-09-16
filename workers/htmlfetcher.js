@@ -25,10 +25,12 @@ var processList = function(url, array) {
   var names = array.map((name) => {
     return archives.translate(name);
   });
+  var dirPath = path.join(__dirname, '../archives/', url);
   for (var i = 0; i < names.length; i++) {
-    if (!fs.existsSync(names[i])) {
-      fs.mkdirSync(basePath);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath);
     }
+    fetchSite(url, dirPath);
   }
 };
 
