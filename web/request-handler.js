@@ -2,16 +2,13 @@ var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var url = require('url');
 var fs = require('fs');
-var path = require('path');
 var queryString = require('querystring');
-var fetchSite = require('../workers/htmlfetcher.js');
 // require more modules/folders here!
 
 var requestMethods = {
   'GET': function(req, res, parsedUrl) {
     var pathname = parsedUrl.pathname;
     var dirName = queryString.parse(parsedUrl.query).url;
-
     if (pathname === '/' && !dirName) {
       fs.readFile('web/public/index.html', 'utf8', (err, data) => {
         res.writeHead(requestMethods.statusCode, requestMethods.headers);
@@ -22,8 +19,12 @@ var requestMethods = {
         res.writeHead(requestMethods.statusCode, {'Content-Type': 'text/css'});
         res.end(data);
       });
+    } else if (pathname === '/favicon.ico') {
+      res.writeHead(requestMethods.statusCode, requestMethods.headers);
+      res.end();
     } else {
       //////////////// refactor with directory name////////////////////////////////////////////////////
+      var searchPath = path.join(__dirname, '../archives/', dirName, 'index.html');
       fs.exists(searchPath, (exists) => {
         if (exists) {
           fs.readFile(searchPath, 'utf8', (err, data) => {
