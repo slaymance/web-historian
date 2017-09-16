@@ -156,3 +156,12 @@ describe('archive helpers', function() {
   });
 });
 
+describe('Additional tests', function() {
+  it('should load test.html upon request', function (done) {
+    request
+      .get('/archives/sites/test/test.html')
+      .expect(200, /<div/, function (err) {
+        done(err);
+      });
+  });
+});

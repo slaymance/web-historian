@@ -9,10 +9,18 @@ var _ = require('underscore');
  * customize it in any way you wish.
  */
 
+var sitesPath = path.join(__dirname, '../archives/sites.txt');
+
+
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
   list: path.join(__dirname, '../archives/sites.txt')
+};
+
+exports.translate = function(domainName) {
+  domainName = domainName.replace(/:/g, '');
+  return domainName;
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -25,13 +33,30 @@ exports.initialize = function(pathsObj) {
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(callback) {
+exports.readListOfUrls = function(url, callback) {
+  fs.readFile(sitesPath, (err, data) => {
+    callback(url, data.toString().split('\n'), exports.addUrlToList);
+  });
 };
 
-exports.isUrlInList = function(url, callback) {
+exports.isUrlInList = function(url, array, callback) {
+  if (!array.includes(url)) {
+    callback(url, array);
+  }
 };
 
-exports.addUrlToList = function(url, callback) {
+exports.addUrlToList = function(url, array, callback, fileName) {
+  fileName = fileName === undefined ? sitesPath : fileName;
+  while (array.indexOf('') >= 0) {
+    array.splice(array.indexOf(''), 1);
+  }
+  array.push(url);
+  fs.writeFile(fileName, array.join('\n'), err => {
+    if (err) {
+      throw err;
+    }
+    console.log('File written');
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
