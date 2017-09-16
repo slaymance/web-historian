@@ -26,7 +26,7 @@ var processList = function(url, array) {
     return archives.translate(name);
   });
   for (var i = 0; i < names.length; i++) {
-    if (!fs.existsSync(basePath)) {
+    if (!fs.existsSync(names[i])) {
       fs.mkdirSync(basePath);
     }
   }
