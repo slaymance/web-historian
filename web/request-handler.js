@@ -7,6 +7,7 @@ var queryString = require('querystring');
 
 var requestMethods = {
   'GET': function(req, res, parsedUrl) {
+    var headerFile = queryString.parse(req.headers.referer)[`http://127.0.0.1:8080/?url`];
     var pathname = parsedUrl.pathname;
     var dirName = queryString.parse(parsedUrl.query).url;
     if (pathname === '/' && !dirName) {
@@ -25,6 +26,9 @@ var requestMethods = {
     } else {
       //////////////// refactor with directory name////////////////////////////////////////////////////
       var searchPath = path.join(__dirname, '../archives/', dirName, 'index.html');
+      if (!dirName) {
+        searchPath = path.join(__dirname, '../archives/', headerFile, pathname);
+      }
       fs.exists(searchPath, (exists) => {
         if (exists) {
           fs.readFile(searchPath, 'utf8', (err, data) => {
@@ -34,7 +38,9 @@ var requestMethods = {
         } else {
           res.writeHead(404, requestMethods.headers);
           res.end();
-          archive.readListOfUrls(dirName, archive.isUrlInList);
+          if (dirName) {
+            archive.readListOfUrls(dirName, archive.isUrlInList);
+          }
         }
       });
     }
